@@ -163,7 +163,7 @@ const listBlog = async function (req, res, next) {
     res.status(500).send({ status: false, message: err.message });
   }
 };
-
+///////////--------------------UPDATE BLOG---------------////////////////
 const updateBlog = async function (req, res) {
   try {
     let blogId = req.params.blogId;
@@ -192,5 +192,32 @@ const updateBlog = async function (req, res) {
     res.status(500).send({ status: false, message: err.message });
   }
 };
+///////////--------------------DELETE BLOG---------------////////////////
+const deleteBlog=async function(req,res){
+  try {
+    let blogId = req.params.blogId;
+  
+    let checkUser = await blogModel.findOne({ _id: blogId, isDeleted: false });
+    if (!checkUser)
+      return res.status(404).send({ status: false, message: "No blogs found" });
+
+    if (checkUser.author != req.token.userId)
+      return res
+        .status(403)
+        .send({
+          status: false,
+          message: "User not authorized to access this data ",
+        });
+
+    await blogModel.findOneAndUpdate(
+      { _id: blogId, isDeleted: false },
+      {isDeleted:true},
+      { new: true }
+    );
+    res.status(204).send({ status: true, message:"Blog Deleted"});
+  } catch (err) {
+    res.status(500).send({ status: false, message: err.message });
+  }
+}
 
 module.exports = { createBlog, listBlog, updateBlog };

@@ -1,6 +1,6 @@
 const express=require("express")
 const { authentication, authorization } = require("../auth/auth")
-const { createBlog, listBlog } = require("../controllers/blogcontroller")
+const { createBlog, listBlog, updateBlog } = require("../controllers/blogcontroller")
 const { userRegister, userLogin, getUser } = require("../controllers/usercontroller")
 const { userValidation } = require("../validation/userValidations")
 const router= express.Router()
@@ -12,7 +12,8 @@ router.get("/getUsers",getUser)
 ////----------BLOG APIs--------/////////
 router.post("/blog/:userId",authentication,authorization,createBlog)
 router.get("/blog/:userId",authentication,authorization,listBlog)
-
+router.put("/blog/:blogId",authentication,authorization,updateBlog)
+router.delete("/blog/:userId",authentication,authorization,listBlog)
 
 
 
