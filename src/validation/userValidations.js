@@ -10,6 +10,11 @@ const isValid = function (value) {
 
 const userValidation = async function (req, res, next) {
   try {
+    if(Object.keys(req.body).length==0)
+    return res
+    .status(400)
+    .send({ status: false, message: "Please enter valid input in body" });
+
     let { firstName, lastName, email, password, DOB, role } = req.body;
 
     let data = {};
