@@ -1,8 +1,8 @@
 const userModel = require("../models/usermodel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const validator=require("validator")
-
+const validator = require("validator");
+///////////-------------------------------------USER REGISTER-----------------/////////////////
 const userRegister = async function (req, res) {
   try {
     let data = req.userData;
@@ -14,7 +14,15 @@ const userRegister = async function (req, res) {
     res.status(500).send({ status: false, message: err.message });
   }
 };
+///////////-------------------------------------USER LIST-----------------/////////////////
+const getUser = async function (req, res) {
+  let findUsers = await userModel
+    .find()
+    .select({ _id: 0, firstName: 1, lastName: 1, email: 1, DOB: 1, role: 1 });
 
+  res.status(200).send({ status: true, data: findUsers });
+};
+///////////-------------------------------------USER LOGIN-----------------/////////////////
 const userLogin = async function (req, res) {
   try {
     if (Object.keys(req.body).length == 0)
@@ -82,4 +90,4 @@ const userLogin = async function (req, res) {
     res.status(500).send({ status: false, message: err.message });
   }
 };
-module.exports = { userRegister, userLogin };
+module.exports = { userRegister, userLogin, getUser };
