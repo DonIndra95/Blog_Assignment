@@ -220,4 +220,4 @@ const deleteBlog=async function(req,res){
   }
 }
 
-module.exports = { createBlog, listBlog, updateBlog };
+module.exports = { createBlog, listBlog, updateBlog,deleteBlog };
