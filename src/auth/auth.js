@@ -7,11 +7,11 @@ const authentication = function (req, res, next) {
     let bearerToken = req.headers["authorization"];
     let token = null;
 
-    if (typeof bearerToken !== undefined) {
+    if (bearerToken != undefined) {
       let bearer = bearerToken.split(" ");
       token = bearer[1];
     }
-    if (!token)
+    if (token==null)
       return res
         .status(401)
         .send({ status: false, message: "Token missing,not logged in" });

@@ -22,12 +22,13 @@ const blogSchema = new mongoose.Schema(
     },
     modify_date: {
       type: String,
-      required: true,
+      default:null
     },
     status: {
       type: String,
       enum: ["Publish", "Unpublish"],
       required: true,
+      default:null
     },
     category: {
       type: String,
@@ -43,7 +44,6 @@ const blogSchema = new mongoose.Schema(
     },
     recurrence: {
       type: String,
-      required: true,
     },
   },
   { timestamps: true }
