@@ -78,7 +78,7 @@ const listBlog = async function (req, res, next) {
   try {
     let { title, dateFrom, dateTo, author, category } = req.query;
 
-    let filter = {};
+    let filter = { isDeleted: false };
 
     if (title?.length == 0)
       return res
@@ -152,7 +152,7 @@ const listBlog = async function (req, res, next) {
     }
 
     if (dateTo && dateFrom)
-      filter.publised_date = {$gte: fromDate,$lte: toDate };
+      filter.publised_date = { $gte: fromDate, $lte: toDate };
 
     let allBlogs = await blogModel.find(filter).lean();
     if (allBlogs.length == 0)
@@ -164,4 +164,33 @@ const listBlog = async function (req, res, next) {
   }
 };
 
-module.exports = { createBlog, listBlog };
+const updateBlog = async function (req, res) {
+  try {
+    let blogId = req.params.blogId;
+    let data = req.body;
+
+    let checkUser = await blogModel.findOne({ _id: blogId, isDeleted: false });
+    if (!checkUser)
+      return res.status(404).send({ status: false, message: "No blogs found" });
+
+    if (checkUser.author != req.token.userId)
+      return res
+        .status(403)
+        .send({
+          status: false,
+          message: "User not authorized to access this data ",
+        });
+
+    let updateBlog = await blogModel.findOneAndUpdate(
+      { _id: blogId, isDeleted: false },
+      data,
+      { new: true }
+    );
+
+    res.status(200).send({ status: true, data: updateBlog });
+  } catch (err) {
+    res.status(500).send({ status: false, message: err.message });
+  }
+};
+
+module.exports = { createBlog, listBlog, updateBlog };

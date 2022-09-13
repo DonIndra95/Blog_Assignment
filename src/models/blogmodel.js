@@ -45,6 +45,10 @@ const blogSchema = new mongoose.Schema(
     recurrence: {
       type: String,
     },
+    isDeleted:{
+        type:Boolean,
+        default:false
+    }
   },
   { timestamps: true }
 );  
