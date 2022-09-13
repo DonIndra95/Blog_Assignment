@@ -19,6 +19,10 @@ const getUser = async function (req, res) {
   let findUsers = await userModel
     .find()
     .select({ _id: 0, firstName: 1, lastName: 1, email: 1, DOB: 1, role: 1 });
+    if(findUsers.length==0)
+    return res
+        .status(404)
+        .send({ status: false, message: "No users found" });
 
   res.status(200).send({ status: true, data: findUsers });
 };

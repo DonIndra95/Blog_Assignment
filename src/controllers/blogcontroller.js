@@ -43,7 +43,7 @@ const createBlog = async function (req, res) {
 
     data.status = status;
 
-    if (status == "Publish") data.publised_date = new Date().toISOString();
+    if (status == "Publish") data.publised_date = Date.now();
 
     if (!isValid(category))
       return res
@@ -72,4 +72,96 @@ const createBlog = async function (req, res) {
   }
 };
 
-module.exports = { createBlog };
+///////////------------LIST BLOG--------------------////////////////
+
+const listBlog = async function (req, res, next) {
+  try {
+    let { title, dateFrom, dateTo, author, category } = req.query;
+
+    let filter = {};
+
+    if (title?.length == 0)
+      return res
+        .status(400)
+        .send({ status: false, message: "Please enter a title" });
+
+    if (title) {
+      if (!isValid(title))
+        return res
+          .status(400)
+          .send({ status: false, message: "Please enter a valid title" });
+
+      filter.title = title.trim();
+    }
+
+    if (category?.length == 0)
+      return res
+        .status(400)
+        .send({ status: false, message: "Please enter a category" });
+
+    if (category) {
+      if (!isValid(category))
+        return res
+          .status(400)
+          .send({ status: false, message: "Please enter a valid category" });
+
+      filter.category = category.trim();
+    }
+
+    if (author?.length == 0)
+      return res
+        .status(400)
+        .send({ status: false, message: "Please enter a author" });
+
+    if (author) {
+      if (!isValidObjectId(author))
+        return res
+          .status(400)
+          .send({ status: false, message: "Please enter a valid author" });
+
+      filter.author = author.trim();
+    }
+    if (dateFrom?.length == 0)
+      return res
+        .status(400)
+        .send({ status: false, message: "Please enter a dateFrom" });
+
+    if (dateFrom) {
+      if (!isValid(dateFrom))
+        return res
+          .status(400)
+          .send({ status: false, message: "Please enter a valid dateFrom" });
+      var fromDate = new Date(dateFrom).getTime();
+
+      filter.publised_date = { $gte: fromDate };
+    }
+
+    if (dateTo?.length == 0)
+      return res
+        .status(400)
+        .send({ status: false, message: "Please enter a dateTo" });
+
+    if (dateTo) {
+      if (!isValid(dateTo))
+        return res
+          .status(400)
+          .send({ status: false, message: "Please enter a valid dateTo" });
+      var toDate = new Date(dateTo).getTime();
+
+      filter.publised_date = { $lte: toDate };
+    }
+
+    if (dateTo && dateFrom)
+      filter.publised_date = {$gte: fromDate,$lte: toDate };
+
+    let allBlogs = await blogModel.find(filter).lean();
+    if (allBlogs.length == 0)
+      return res.status(404).send({ status: false, message: "No blogs found" });
+
+    res.status(200).send({ status: true, data: allBlogs });
+  } catch (err) {
+    res.status(500).send({ status: false, message: err.message });
+  }
+};
+
+module.exports = { createBlog, listBlog };
