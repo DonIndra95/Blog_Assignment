@@ -4,11 +4,9 @@ const route = require("./routes/route");
 const app = express();
 const port = 3000;
 
-app.use(express.json())
+app.use(express.json());
 mongoose
-  .connect(
-    "mongodb+srv://IndrashishRoy:windows10@radon-cohort-cluster.gtmdsvp.mongodb.net/Blog_Assignment-DB?retryWrites=true&w=majority"
-  )
+  .connect("mongodb://localhost:27017")
   .then(() => console.log("MongoDb is connected"))
   .catch((err) => console.log(err));
 
